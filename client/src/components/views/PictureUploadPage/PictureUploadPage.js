@@ -1,6 +1,7 @@
-import React ,{useState} from 'react'
+import React ,{useState} from 'react';
 import { Typography, Button, Form, message, Input, Icon } from 'antd';
 import Dropzone from 'react-dropzone';
+import axios from 'axios';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -12,7 +13,9 @@ const PrivateOptions = [
 const CategoryOptions = [
     { value: 0, label: "Film& Animation"},
     { value: 1, label: "Autos & Vehicles"},
-    { value: 2, label: "Music"}
+    { value: 2, label: "Music"},
+    { value: 0, label: "Pets & Animals" },
+    { value: 0, label: "Sports" },
 ]
 
 function PictureUploadPage() {
@@ -38,6 +41,26 @@ function PictureUploadPage() {
         setCategory(e.currentTarget.value)
     }
 
+    const onDrop = (files) => {
+
+        let formData = new FormData();
+        const config = {
+            header: { 'content-type': 'multipart/form-data' }
+        }
+        console.log(files)
+        formData.append("file", files[0])
+
+        axios.post('/api/picture/uploadfiles', formData, config)
+            .then(response => {
+                if (response.data.success) {
+                    console.log(response.data)
+                } else {
+                    alert('failed to save the video in server')
+                }
+            })
+
+    }
+
 
 
 
@@ -52,9 +75,9 @@ function PictureUploadPage() {
                     {/* Drop zone */}
 
                     <Dropzone
-                        onDrop
-                        multiple
-                        maxSize
+                        onDrop={onDrop}
+                        multiple={false}
+                        maxSize={10000000000}
                     >
                         {({ getRootProps, getInputProps}) => (
                         <div style={{ width: '300px', height: '240px', border:'1px solid lightgray', display: 'flex',
