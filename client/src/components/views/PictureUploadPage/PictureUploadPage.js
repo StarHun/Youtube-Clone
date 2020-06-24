@@ -24,6 +24,10 @@ function PictureUploadPage() {
     const [Description, setDescription] = useState("")
     const [Private, setPrivate] = useState(0)
     const [Category, setCategory] = useState("Flim&Animation")
+    const [FilePath, setFilePath] = useState("")
+    const [Duration, setDuration] = useState("")
+    const [ThumbnailPath, setThumbnailPath] = useState("")
+
 
     const onTitleChange = (e) => {
         setPictureTitle(e.currentTarget.value)
@@ -54,6 +58,26 @@ function PictureUploadPage() {
             .then(response => {
                 if (response.data.success) {
                     console.log(response.data)
+
+                    let variable = {
+                        url:response.data.filePath,
+                        fileName: response.data.fileName
+                    }
+                    console.log(response.data.filePath)
+
+                    axios.post('/api/picture/thumbnail', variable)
+                    .then(response => {
+                        if(response.data.success) {
+
+                            setDuration(response.data.fileDuration)
+                            setThumbnailPath(response.data.filePath)
+
+                        } else {
+                            alert('failed to create thumbnail')
+                        }
+                    })
+
+
                 } else {
                     alert('failed to save the video in server')
                 }
@@ -87,11 +111,11 @@ function PictureUploadPage() {
                         </div>
                     )}
                     </Dropzone>
-
-                    {/* Thumbnail */}
+                {ThumbnailPath &&
                     <div>
-                        <img src alt />                    
+                        <img src={`http://localhost:5000/${ThumbnailPath}`} alt="thumbnail" />                    
                     </div>
+                }
 
                 </div>
 
