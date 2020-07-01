@@ -2,6 +2,7 @@ import React ,{useState} from 'react';
 import { Typography, Button, Form, message, Input, Icon } from 'antd';
 import Dropzone from 'react-dropzone';
 import axios from 'axios';
+import { useSelector } from 'react-redux' ;
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -18,8 +19,8 @@ const CategoryOptions = [
     { value: 0, label: "Sports" },
 ]
 
-function PictureUploadPage() {
-
+function PictureUploadPage(props) {
+    const user = useSelector(state => state.user)
     const [Picturetitle, setPictureTitle] = useState("")
     const [Description, setDescription] = useState("")
     const [Private, setPrivate] = useState(0)
@@ -66,15 +67,15 @@ function PictureUploadPage() {
                     console.log(response.data.filePath)
 
                     axios.post('/api/picture/thumbnail', variable)
-                    .then(response => {
-                        if(response.data.success) {
+                        .then(response => {
+                            if(response.data.success) {
 
-                            setDuration(response.data.fileDuration)
-                            setThumbnailPath(response.data.filePath)
+                                setDuration(response.data.fileDuration)
+                                setThumbnailPath(response.data.filePath)
 
-                        } else {
-                            alert('failed to create thumbnail')
-                        }
+                            } else {
+                                alert('failed to create thumbnail')
+                                }
                     })
 
 
@@ -85,7 +86,36 @@ function PictureUploadPage() {
 
     }
 
+    const onSumit = (e) => {
+        e.preventDefault();
 
+        const variables = {
+            writer: user.userData._id,
+            title: Picturetitle,
+            description: Description,
+            privacy: Private,
+            filepath: FilePath,
+            category: Category,
+            duration: Duration,
+            thumbnail: ThumbnailPath
+        }
+        axios.post('/api/picture/uploadPicture', variables)
+            .then(response => {
+                if(response.data.success){
+                    
+                    message.success('upload success.')
+                    alert('업로드 성공.');
+
+                    setTimeout(() => {
+                        props.history.push('/')
+                    }, 3000);
+
+
+                } else {
+                    alert('failed to upload')
+                }
+            })
+    }
 
 
     return (
@@ -94,7 +124,7 @@ function PictureUploadPage() {
                 <Title level={2}> Upload Video </Title>
             </div>
             
-            <Form   onSubmit>
+            <Form   onSubmit={onSumit}>
                 <div style={{ display:'flex', justifyContent:'space-between' }}>
                     {/* Drop zone */}
 
@@ -155,7 +185,7 @@ function PictureUploadPage() {
 
                 <br />
                 <br />
-                <Button type="primary"  size="large" onClick>
+                <Button type="primary"  size="large" onClick={onSumit}>
                    Submit
                 </Button>
 

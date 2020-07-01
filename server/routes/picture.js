@@ -3,10 +3,13 @@ const router = express.Router();
 const multer = require('multer');
 var ffmpeg = require('fluent-ffmpeg');
 
-
-//const { Picture } = require("../models/Picture");
-
+const { Picture } = require("../models/Picture");
 const { auth } = require("../middleware/auth");
+
+
+
+
+
 
 
 let storage = multer.diskStorage({
@@ -40,22 +43,22 @@ router.post('/uploadfiles', (req, res) => {
             return res.json({ success: false, err })
         }
         return res.json({ success: true, filePath: res.req.file.path, fileName: res.req.file.filename })
-    })
+    });
 
 
-})
+});
 
 router.post("/thumbnail", (req, res) => {
-
+    
+    console.log(req.body.url);
     let thumbsFilePath ="";
     let fileDuration ="";
-
     ffmpeg.ffprobe(req.body.url, function(err, metadata){
         console.dir(metadata);
         console.log(metadata.format.duration);
 
         fileDuration = metadata.format.duration;
-    })
+    });
     
 
 
@@ -76,6 +79,19 @@ router.post("/thumbnail", (req, res) => {
             // %b input basename ( filename w/o extension )
             filename:'thumbnail-%b.png'
         });
+
+});
+
+
+router.post('/uploadPicture', (req, res) => {
+
+    const picture = new Picture(req.body);
+
+    picture.save((err, doc)=> {
+        if(err) return res.json({ success: false, err})
+        res.status(200).json({ success: true})
+    });
+
 
 });
 
