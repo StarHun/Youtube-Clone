@@ -8,15 +8,15 @@ const { Meta } = Card;
 
 function LandingPage() {
 
-    const [Picture, setPicture] = useState([])
+    const [Video, setVideo] = useState([])
 
     useEffect(() => {
 
-        axios.get('/api/picture/getPictures')
+        axios.get('/api/video/getVideos')
             .then(response => {
                 if(response.data.success){
                     console.log(response.data);
-                    setPicture(response.data.pictures);
+                    setVideo(response.data.videos);
                 } else {
                     alert("faild to load video");
                 }
@@ -24,16 +24,16 @@ function LandingPage() {
         
     }, [])
 
-    const renderCards = Picture.map((picture, index) => {
+    const renderCards = Video.map((video, index) => {
 
-        var minutes = Math.floor(picture.duration / 60);
-        var seconds = Math.floor((picture.duration - minutes * 60));
-        console.log(picture.duration);
+        var minutes = Math.floor(video.duration / 60);
+        var seconds = Math.floor((video.duration - minutes * 60));
+        console.log(video.duration);
 
         return <Col    lg={6} md={8} xs={24}>
-        <a href={`/picture/post/${picture._id}`}>  
+        <a href={`/video/${video._id}`}>  
            <div style={{ position: 'relative' }}>
-                <img style={{ width: '100%' }} src={`http://localhost:5000/${picture.thumbnail}`} alt="thumbnail" /> 
+                <img style={{ width: '100%' }} src={`http://localhost:5000/${video.thumbnail}`} alt="thumbnail" /> 
                <div className="duration">
                     <span>{minutes} : {seconds}</span> 
                </div>
@@ -42,14 +42,14 @@ function LandingPage() {
        <br />
        <Meta
             avatar={
-                     <Avatar src={picture.writer.image} />
+                     <Avatar src={video.writer.image} />
              }
-             title={picture.title}
+             title={video.title}
            description=""
        />
-        <span>{picture.writer.name} </span> <br /> 
-         <span style={{ marginLeft: '3rem' }}> {picture.views} views</span> - 
-       <span>{moment(picture.createdAT).format("MMM Do YY")}</span> 
+        <span>{video.writer.name} </span> <br /> 
+         <span style={{ marginLeft: '3rem' }}> {video.views} views</span> - 
+       <span>{moment(video.createdAT).format("MMM Do YY")}</span> 
    </Col>
 
     })
