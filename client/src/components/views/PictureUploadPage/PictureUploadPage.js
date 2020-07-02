@@ -103,8 +103,7 @@ function PictureUploadPage(props) {
             .then(response => {
                 if(response.data.success){
                     
-                    message.success('upload success.')
-                    alert('업로드 성공.');
+                    message.success('upload success.');
 
                     setTimeout(() => {
                         props.history.push('/')
